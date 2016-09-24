@@ -25,8 +25,8 @@ echo Found:
 ls -a $BUILD_DIR
 
 # cd to project and npm install
-#cd $BUILD_DIR
-#npm install
+cd $BUILD_DIR
+npm install
 
 # check for assets stored locally and, if found, transfer assets to ASSET_DEST in root of project 
 PROJECT_ASSETS_DIR=~/src/assets/$PROJECT_NAME
