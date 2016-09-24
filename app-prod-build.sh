@@ -25,8 +25,8 @@ echo Found:
 ls -a $BUILD_DIR
 
 # cd to project and npm install
-cd $BUILD_DIR
-npm install
+#cd $BUILD_DIR
+#npm install
 
 # check for assets stored locally and, if found, transfer assets to ASSET_DEST in root of project 
 PROJECT_ASSETS_DIR=~/src/assets/$PROJECT_NAME
@@ -41,10 +41,12 @@ if [ -d "$PROJECT_ASSETS_DIR" ]; then
   # If found, copy over contents ...
   for SUB_DIR in $PROJ_ASSET_SUB_DIRS 
   do
-    if [ -d "$BUILD_DIR/$ASSET_DEST_DIR/$SUB_DIR" ]; then
-      echo "The corresponding directory $BUILD_DIR/$ASSET_DEST_DIR/$SUB_DIR was found in the project!"
-      cp $PROJECT_ASSETS_DIR/$SUB_DIR/* $BUILD_DIR/$ASSET_DEST_DIR/$SUB_DIR/.
-      echo $( ls $BUILD_DIR/$ASSET_DEST_DIR/$SUB_DIR | wc -l) items moved to asset folder
+    CURR_PROJ_ASSET_PATH=~/src/$BUILD_DIR/$ASSET_DEST_DIR/$SUB_DIR
+    echo Checking $CURR_PROJ_ASSET_PATH
+    if [ -d "$CURR_PROJ_ASSET_PATH" ]; then
+      echo "The corresponding directory $CURR_PROJ_ASSET_PATH was found in the project!"
+      cp $PROJECT_ASSETS_DIR/$SUB_DIR/* $CURR_PROJ_ASSET_PATH/.
+      echo $( ls $CURR_PROJ_ASSET_PATH | wc -l) items moved to asset folder
     fi
   done
 
