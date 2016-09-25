@@ -5,7 +5,7 @@ ASSET_DEST_DIR=$3
 echo Building $PROJECT_NAME for production ...
 
 # repo url
-REPO_URL=https://github.com/$GIT_USER/$PROJECT_NAME.git
+REPO_URL=git@github.com:$GIT_USER/$PROJECT_NAME.git
 echo Project repo: $REPO_URL
 
 # get latest commit hash of project
@@ -49,5 +49,6 @@ if [ -d "$PROJECT_ASSETS_DIR" ]; then
       echo $( ls $CURR_PROJ_ASSET_PATH | wc -l) items moved to asset folder
     fi
   done
-
 fi
+
+npm run dist
