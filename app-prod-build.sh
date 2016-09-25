@@ -1,3 +1,13 @@
+#!/bin/bash 
+
+############### NOTES ############### NOTES ############### NOTES ###############
+# Run from directory that includes assets. Output will be created here as well.
+# $ ls src
+# >>> assets  util-scripts <build goes here>
+# $ cd src
+# $ bash util-scripts/app-prod-build.sh <git user> <repo name> <assets folder>
+#################################################################################
+
 # project name from args
 GIT_USER=$1
 PROJECT_NAME=$2
@@ -52,3 +62,4 @@ if [ -d "$PROJECT_ASSETS_DIR" ]; then
 fi
 
 npm run dist
+(cd public; pm2 start /usr/lib/python2.7/SimpleHTTPServer.py)
