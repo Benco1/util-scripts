@@ -6,6 +6,9 @@
 # >>> assets  util-scripts <build goes here>
 # $ cd src
 # $ bash util-scripts/app-prod-build.sh <git user> <repo name> <assets folder>
+#
+# TODO: Refactor paths relative to $PWD where possible; use subshell as
+# necessary; avoid doing '~/src/...'
 #################################################################################
 
 # project name from args
@@ -25,7 +28,9 @@ GIT_HASH=$(echo $GIT_HEAD | while read a b; do echo "$a"; done)
 echo Latest hash: $GIT_HASH
 
 # create unique directory  
-BUILD_DIR=$PROJECT_NAME-$GIT_HASH
+BUILD_DIR=$PROJECT_NAME-${GIT_HASH}
+BUILD_PATH=$PWD/$BUILD_DIR
+echo "BUILD PATH: $BUILD_PATH"
 
 # clone repo
 git clone $REPO_URL $BUILD_DIR
@@ -40,6 +45,7 @@ npm install
 
 # check for assets stored locally and, if found, transfer assets to ASSET_DEST in root of project 
 PROJECT_ASSETS_DIR=~/src/assets/$PROJECT_NAME
+echo "PROJECT ASSETS DIR: $PROJECT_ASSETS_DIR"
 if [ -d "$PROJECT_ASSETS_DIR" ]; then
   # Will enter here if assets directory exists for project
   echo "Assets directory found"
@@ -61,5 +67,28 @@ if [ -d "$PROJECT_ASSETS_DIR" ]; then
   done
 fi
 
+# check transforms directory to see if any are set for the current project
+PROJECT_TRANSFORMS_DIR=~/src/transforms/$PROJECT_NAME
+if [ -d "$PROJECT_TRANSFORMS_DIR" ]; then
+  # Enter here if transforms directory exists for project
+  echo "Transforms directory found"
+  
+  # Get transform scripts to be run
+  PROJECT_TRANSFORMS=$(ls $PROJECT_TRANSFORMS_DIR)
+  for TRANSFORM in $PROJECT_TRANSFORMS
+  do
+    # check transform is a shell script
+    if [[ ${TRANSFORM: -3} == ".sh" ]]; then
+      echo "Applying transform script: $TRANSFORM"
+      (cd $PROJECT_TRANSFORMS_DIR; ./$TRANSFORM $BUILD_PATH)
+    fi
+  done
+fi
+
+# run npm script to set production env var for webpack
+echo "Running webpack production build"
 npm run dist
+
+# start server process in background with pm2
+echo "Start app"
 (cd public; pm2 start /usr/lib/python2.7/SimpleHTTPServer.py)
